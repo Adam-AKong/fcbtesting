@@ -2,7 +2,7 @@
 
 <p>Project Members: Adam Kong, Brian Kaplan, Vic Grigoryev</p>
 
-<h5>Cal Poly Email: aakong@calpoly.edu, bhkaplan@calpoly.edu</h5>
+<h5>Cal Poly Email: aakong@calpoly.edu, bhkaplan@calpoly.edu, vgrigory@calpoly.edu</h5>
 
 <h2>Proposal Pitch</h2>
 
