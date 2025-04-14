@@ -6,19 +6,19 @@
 
 <h3>User Story 1</h3>
 
-Description
+As someone who enjoys memes and various funny things, I want to be able to create funny characters with unbalanced stats whether too strong or extremely weak, so that I can show them off to others.
 
 <h3>User Story 2</h3>
 
-Description
+As someone who enjoys media for books and movies, I want to bring those characters to life, so that I can make them as accurate as possible with their stats.
 
 <h3>User Story 3</h3>
 
-Description
+As someone who isn't creative in character creation, I want to be able to search by the most popular characters, so that I can see what the majority think are cool characters.
 
 <h3>User Story 4</h3>
 
-Description
+As someone who manages online communities, I want to bring people together, so that we can all talk and discuss things related to the characters.
 
 <h3>User Story 5</h3>
 
@@ -50,19 +50,27 @@ As someone who likes action in media, I want to simulate fights between characte
 
 <h3>Exception 1</h3>
 
-Description
+Exception: Character already exists
+
+Ask the user to choose a new character name or suggest updated stats.
 
 <h3>Exception 2</h3>
 
-Description
+Exception: Choosing a character in a fight that doesn't exist
+
+Ask the user to select a viable character that exists or create that new character.
 
 <h3>Exception 3</h3>
 
-Description
+Exception: Using banned words in a review (we are family friendly)
+
+Notify the user that certain words they used are prohibited.
 
 <h3>Exception 4</h3>
 
-Description
+Exception: Filtering by searching a specific name and no valid results occur
+
+Notify the user that there are 0 search results and suggest to use different search words
 
 <h3>Exception 5</h3>
 
