@@ -92,9 +92,9 @@ The system prompt users to clarify with the title or tag to differentiate indivi
 
 <h3>Exception 8</h3>
 
-Exception: Stats limit / cap
+Exception: Invalid character descriptions (i.e. Invincible or 1 hit)
 
-The system prompt users to put in a reasonable range (i.e. 1-100), and prompts users to stay within that limit.
+The system prompt users to put in something reasonable or gives a warning to users about putting in absolute stats.
 
 <h3>Exception 9</h3>
 If there is a disagreement of existing character strengths, the ratings will be slightly tweaked over time based on repeated polls and averaged out between each other.
@@ -104,13 +104,6 @@ If there are overpowered custom characters appearing in polls, the system will a
 
 <h3>Exception 11</h3>
 If there is an attempted sabotaging of simulated fights, the system will detect when many accounts in the same area vote on the same poll and put a temporary hold on that IP.
-
-<h3>Exception 12</h3>
-
-Exception: Invalid character descriptions (i.e. Invincible or 1 hit)
-
-The system prompt users to put in something reasonable or gives a warning to users about putting in absolute stats.
-
 
 <h3>Exception 12</h3>
 If character spam is detected, the system will put a 24 hour cooldown on the profile to give them time to focus on making their existing characters more fleshed out.
