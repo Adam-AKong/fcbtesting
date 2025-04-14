@@ -22,19 +22,19 @@ As someone who manages online communities, I want to bring people together, so t
 
 <h3>User Story 5</h3>
 
-Description
+As an up and coming game developer, I want to create and balance characters to integrate into my fighting game, so that I can create a fun and balanced game that would be fair to all players.
 
 <h3>User Story 6</h3>
 
-Description
+As an avid competitive debater online, I want to reference reliable character stats and power rankings, so that I can effectively argue a hypothetical battle and win the debate. 
 
 <h3>User Story 7</h3>
 
-Description
+As a Game Master (GM) for my local tabletop group, I want to create original NPCs and bosses inspired with the stats, power ranking, and abilities from exisiting characters, so that I can a more fun and engaging situations for my players.
 
 <h3>User Story 8</h3>
 
-Description
+As a content creator who loves the ideas from _Death Battle!_ on Youtube, I want to use detailed infromation on character stats and abilites, so that I can visualize potential matchups and analyze key strengths and weaknesses that would influence a battle.
 
 <h3>User Story 9</h3>
 As someone who engages in many communities online, I want to know the opinions of others in my circle on the strengths of other characters, so that I can explore and discuss other views on my favorite characters and media.
@@ -74,19 +74,27 @@ Notify the user that there are 0 search results and suggest to use different sea
 
 <h3>Exception 5</h3>
 
-Description
+Exception: If a character with a variation with previous version or form exists 
+
+The system should prompt users to either propose an edit to the original character or confirm a unique variation connected to the original character.
 
 <h3>Exception 6</h3>
 
-Description
+Exception: Creating a character with missing attributes
+
+The system should prompt users to fill in the missing sections (i.e. strength and speed stats are blank)
 
 <h3>Exception 7</h3>
 
-Description
+Exception: Using characters with the same names that can refer to different franchises
+
+The system prompt users to clarify with the title or tag to differentiate individual characters
 
 <h3>Exception 8</h3>
 
-Description
+Exception: Stats limit / cap
+
+The system prompt users to put in a reasonable range (i.e. 1-100), and prompts users to stay within that limit.
 
 <h3>Exception 9</h3>
 If there is a disagreement of existing character strengths, the ratings will be slightly tweaked over time based on repeated polls and averaged out between each other.
@@ -96,6 +104,13 @@ If there are overpowered custom characters appearing in polls, the system will a
 
 <h3>Exception 11</h3>
 If there is an attempted sabotaging of simulated fights, the system will detect when many accounts in the same area vote on the same poll and put a temporary hold on that IP.
+
+<h3>Exception 12</h3>
+
+Exception: Invalid character descriptions (i.e. Invincible or 1 hit)
+
+The system prompt users to put in something reasonable or gives a warning to users about putting in absolute stats.
+
 
 <h3>Exception 12</h3>
 If character spam is detected, the system will put a 24 hour cooldown on the profile to give them time to focus on making their existing characters more fleshed out.
