@@ -139,7 +139,6 @@ Allows the user to get a list of characters based a franchise
 
 Note: some of these fields are subject to change
 ```json
-...
 [
   {
     "character_id": 99,
@@ -162,7 +161,6 @@ Note: some of these fields are subject to change
     "health": 100
   }
 ]
-...
 ```
 
 <h3> Endpoint 8</h3>
@@ -175,7 +173,6 @@ Returns a list of the battles the user has participated in
 
 Note: some of these fields are subject to change
 ```json
-...
 [
   {
     "battle_id": 1,
@@ -190,7 +187,6 @@ Note: some of these fields are subject to change
     "result": "win"
   }
 ]
-...
 ```
 
 <h3> Endpoint 9</h3>
@@ -203,7 +199,6 @@ Returns a ranked list of characters based on ratings and wins.
 
 Note: some of these fields are subject to change
 ```json
-...
 [
   {
     "character_id": 1,
@@ -218,5 +213,4 @@ Note: some of these fields are subject to change
     "wins": 7
   }
 ]
-...
 ```
