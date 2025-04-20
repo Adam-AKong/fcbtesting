@@ -130,6 +130,7 @@ Note: some of these fields are subject to change
 ]
 ```
 <h3> Endpoint 7</h3>
+
 ## GET /franchise/{franchise_id}
 
 **Description:**
@@ -164,6 +165,7 @@ Note: some of these fields are subject to change
 ```
 
 <h3> Endpoint 8</h3>
+
 ## GET /battle/user/{user_id}
 
 **Description:**
@@ -190,6 +192,7 @@ Note: some of these fields are subject to change
 ```
 
 <h3> Endpoint 9</h3>
+
 ## GET /character/leaderboard
 
 **Description:**
