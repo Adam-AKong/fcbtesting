@@ -130,5 +130,93 @@ Note: some of these fields are subject to change
 ]
 ```
 <h3> Endpoint 7</h3>
+## GET /franchise/{franchise_id}
+
+**Description:**
+Allows the user to get a list of characters based a franchise
+
+**Response Example:**
+
+Note: some of these fields are subject to change
+```json
+...
+[
+  {
+    "character_id": 99,
+    "name": "Iron Man",
+    "description": "Genius. Billionaire. Philanthropist.",
+    "rating": 9.2,
+    "strength": 5
+    "speed": 19,
+    "health": 100
+  }
+]
+[
+  {
+    "character_id": 100,
+    "name": "Captain America",
+    "description": "World War 2 Hero, the First Avenger",
+    "rating": 8.9,
+    "strength": 9
+    "speed": 10,
+    "health": 100
+  }
+]
+...
+```
 
 <h3> Endpoint 8</h3>
+## GET /battle/user/{user_id}
+
+**Description:**
+Returns a list of the battles the user has participated in
+
+**Response Example:**
+
+Note: some of these fields are subject to change
+```json
+...
+[
+  {
+    "battle_id": 1,
+    "character_id": 99,
+    "opponent_id": 100,
+    "result": "loss"
+  },
+  {
+    "battle_id": 1,
+    "character_id": 1,
+    "opponent_id": 2,
+    "result": "win"
+  }
+]
+...
+```
+
+<h3> Endpoint 9</h3>
+## GET /character/leaderboard
+
+**Description:**
+Returns a ranked list of characters based on ratings and wins.
+
+**Response Example:**
+
+Note: some of these fields are subject to change
+```json
+...
+[
+  {
+    "character_id": 1,
+    "name": "Superman",
+    "rating": 9,
+    "wins": 10
+  },
+  {
+    "character_id": 2,
+    "name": "Batman",
+    "rating": 8.8,
+    "wins": 7
+  }
+]
+...
+```
