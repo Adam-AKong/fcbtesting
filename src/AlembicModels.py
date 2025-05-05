@@ -94,12 +94,15 @@ class Battle(Base):
     char2_id = Column(Integer, ForeignKey('character.id'), nullable=False)
     vote1 = Column(Integer, default = 0)
     vote2 = Column(Integer, default = 0)
-    winner_id = Column(Integer, ForeignKey('character.id'), nullable=False)
+    winner_id = Column(Integer, ForeignKey('character.id'), nullable=False) # How to set winner for a tie / no winners?
     # start date
     # end date
     
     # __table_args__ = (
     #     # maybe we might need another table to actually store the votes
     #     # that way users can't vote more than once
+    #       # vic: seconding this, but as a many:many table with a composite key
+    #       # to be able to see where a user has voted + how many votes a battle
+    #       # has
     # )   
     
