@@ -6,7 +6,7 @@
 
 <h3> Endpoint 1</h3>
 
-## GET /character/{character_id}
+## GET /character/get/{character_id}
 
 **Description:**  
 Returns the character information of the id provided
@@ -29,7 +29,7 @@ Note: some of these fields are subject to change
 ```
 <h3> Endpoint 2</h3>
 
-## POST /character/review/{character_id}
+## POST /character/{user_id}/review/{character_id}
 
 **Description:**  
 Allows a user to post a review of the character
@@ -111,7 +111,7 @@ Note: some of these fields are subject to change
 ```
 <h3> Endpoint 6</h3>
 
-## GET /character/{user_id}
+## GET /character/list/{user_id}
 
 **Description:**
 Allows the user to get a list of characters created based on a user's id
@@ -131,7 +131,7 @@ Note: some of these fields are subject to change
 ```
 <h3> Endpoint 7</h3>
 
-## GET /franchise/{franchise_id}
+## GET /franchise/get/{franchise_id}
 
 **Description:**
 Allows the user to get a list of characters based a franchise
