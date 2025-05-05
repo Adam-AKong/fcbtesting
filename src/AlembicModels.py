@@ -1,5 +1,6 @@
+from datetime import datetime
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, DateTime, func
+from sqlalchemy import TIMESTAMP, Column, DateTime, Float, ForeignKey, Integer, String, func
 
 Base = declarative_base()
 
@@ -8,7 +9,7 @@ class User(Base):
     
     id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True, nullable=False)
-    created_at = Column(DateTime, default=func.now)
+    made_at = Column(DateTime, server_default=func.now())
 
     # I don't believe we need any constraints here
     # __table_args__ = (
@@ -22,7 +23,7 @@ class C_Review(Base):
     user_id = Column (Integer, ForeignKey('user.id'), nullable=False)
     char_id = Column(Integer, ForeignKey('character.id'), nullable=False)
     comment = Column(String(500), nullable=False)
-    created_at = Column(DateTime, default=func.now)
+    made_at = Column(DateTime, server_default=func.now())
     
     # I don't believe we need any constraints here   
     # __table_args__ = (
@@ -36,7 +37,7 @@ class F_Review(Base):
     user_id = Column (Integer, ForeignKey('user.id'), nullable=False)
     franchise_id = Column(Integer, ForeignKey('franchise.id'), nullable=False)
     comment = Column(String(500), nullable=False)
-    created_at = Column(DateTime, default=func.now)
+    made_at = Column(DateTime, server_default=func.now())
     
     # I don't believe we need any constraints here   
     # __table_args__ = (
@@ -54,7 +55,7 @@ class Character(Base):
     strength = Column(Float, nullable=False)
     speed = Column(Float, nullable=False)
     health = Column(Float, nullable=False)
-    created_at = Column(DateTime, default=func.now)
+    made_at = Column(DateTime, server_default=func.now())
     
     # __table_args__ = (
     #     # maybe add constraints to rating, strength, speed, health

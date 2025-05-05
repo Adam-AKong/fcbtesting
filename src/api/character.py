@@ -96,7 +96,7 @@ def make_character(user_id: int, character: Character):
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text("""
-                INSERT INTO characters (user_id, name, description, rating, strength, speed, health)
+                INSERT INTO character (user_id, name, description, rating, strength, speed, health)
                 VALUES (:user_id, :name, :description, :rating, :strength, :speed, :health)
             """),
             {
