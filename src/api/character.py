@@ -29,7 +29,7 @@ def get_character(character_id: int):
 
 
 
-@router.get("/list{user_id}", response_model=list[Character])
+@router.get("/list/{user_id}", response_model=list[Character])
 def get_user_characters(user_id: int):
     """
     Get all characters made by user.
