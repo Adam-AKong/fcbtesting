@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import sqlalchemy
 from src import database as db
 
-from src.api.models import Character
+from src.api.models import Character, C_Review
 
 
 router = APIRouter(prefix="/character", tags=["Character"])
@@ -56,6 +56,27 @@ def get_user_characters(user_id: int):
         ),
     ]
     return characters
+
+@router.get("/get_review/{user_id}", response_model=list[C_Review])
+def get_character_review(character_id: int):
+    """
+    Get all reviews for a given character referencing its id.
+    """
+    # Placeholder for actual database call
+    with db.engine.begin() as connection:
+        comments = connection.execute(
+            sqlalchemy.text("""
+                SELECT comment
+                FROM c_review
+                WHERE char_id = :char_id
+            """),
+            {
+                "char_id": character_id
+            }
+        )
+
+        return comments
+
 
 @router.get("/leaderboard", response_model=list[Character])
 def get_leaderboard():
@@ -120,4 +141,15 @@ def review_character(user_id: int, character_id: int, comment: str):
     if not comment:
         raise HTTPException(status_code=400, detail="Comment cannot be empty")
     # Save the review to the database
-
+    with db.engine.begin() as connection:
+        connection.execute(
+            sqlalchemy.text("""
+                INSERT INTO c_review (user_id, char_id, comment)
+                VALUES (:user_id, :char_id, :comment)
+            """),
+            {
+                "user_id": user_id,
+                "name": character_id,
+                "comment": comment
+            },
+        )
