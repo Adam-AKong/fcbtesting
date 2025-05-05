@@ -29,7 +29,7 @@ Note: some of these fields are subject to change
 ```
 <h3> Endpoint 2</h3>
 
-## POST /character/{user_id}/review/{character_id}
+## POST /character/review
 
 **Description:**  
 Allows a user to post a review of the character
@@ -89,7 +89,7 @@ Note: some of these fields are subject to change
 ```
 <h3> Endpoint 5</h3>
 
-## POST /character/make/{user_id}/{character_id}
+## POST /character/make/
 
 **Description:**
 Allows the user to create a character that is linked to their user id

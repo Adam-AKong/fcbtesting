@@ -19,7 +19,7 @@ def get_franchise(franchise_id: int):
     )
     return franchise
 
-@router.post("{user_id}/review/{franchise_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/review/{franchise_id}", status_code=status.HTTP_204_NO_CONTENT)
 def make_franchise_review(user_id: int, franchise_id: int, comment: str):
     """
     Make a review for a franchise.

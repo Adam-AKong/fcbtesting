@@ -84,7 +84,7 @@ def get_leaderboard():
     return characters
 
 
-@router.post("/make{user_id}/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
 def make_character(user_id: int, character: Character):
     """
     Create a new character.
@@ -101,7 +101,7 @@ def make_character(user_id: int, character: Character):
     )
 
 
-@router.post("/{user_id}/review/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/review/{char_id}", status_code=status.HTTP_204_NO_CONTENT)
 def review_character(user_id: int, character_id: int, comment: str):
     """
     Review a character.
