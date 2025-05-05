@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from api import character, franchise
-from src.api import battle
+from src.api import character, franchise, battle
+
 
 app = FastAPI()
 

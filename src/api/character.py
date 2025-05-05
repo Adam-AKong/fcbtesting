@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
-from api.models import Character
+from src.api.models import Character
 
 
 router = APIRouter(prefix="/character", tags=["Character"])

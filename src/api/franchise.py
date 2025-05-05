@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
-from api.models import Franchise
+from src.api.models import Franchise
 
 router = APIRouter(prefix="/franchise", tags=["Franchise"])
 
