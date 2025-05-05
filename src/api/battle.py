@@ -25,14 +25,14 @@ def user_participation(user_id: int):
     """
     pass
 
-@router.get("/vote/{battle_id}/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/vote/{battle_id}/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
 def battle_vote(battle_id: int, character_id: int):
     """
     Vote for a character during an active battle.
     """
     pass
 
-@router.get("/make", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
 def create_battle(character_1: int, character_2: int, duration: int):
     """
     Create a battle between two characters.
