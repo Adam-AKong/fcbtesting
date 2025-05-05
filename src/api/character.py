@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
+import sqlalchemy
+from src import database as db
 
 from src.api.models import Character
 
@@ -90,15 +92,23 @@ def make_character(user_id: int, character: Character):
     Create a new character.
     """
     # Placeholder for actual database call
-    character = Character(
-        id=character.id,
-        name=character.name,
-        description=character.description,
-        rating=character.rating,
-        strength=character.strength,
-        speed=character.speed,
-        health=character.health,
-    )
+    
+    with db.engine.begin() as connection:
+        connection.execute(
+            sqlalchemy.text("""
+                INSERT INTO characters (user_id, name, description, rating, strength, speed, health)
+                VALUES (:user_id, :name, :description, :rating, :strength, :speed, :health)
+            """),
+            {
+                "user_id": user_id,
+                "name": character.name,
+                "description": character.description,
+                "rating": character.rating,
+                "strength": character.strength,
+                "speed": character.speed,
+                "health": character.health,
+            },
+        )
 
 
 @router.post("/review/{char_id}", status_code=status.HTTP_204_NO_CONTENT)
