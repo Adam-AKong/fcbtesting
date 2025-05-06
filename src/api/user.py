@@ -33,6 +33,29 @@ def get_user(user_id: int):
 
     return user
 
+@router.get("/get/{username}", response_model=User)
+def get_user_by_name(username: str):
+    """
+    Get User by name.
+    """
+    # Placeholder for actual database call
+    with db.engine.begin() as connection:
+        user = connection.execute(
+            sqlalchemy.text("""
+                SELECT *
+                FROM user
+                WHERE name = :username
+            """),
+            {
+             "username": username,
+             },
+        ).one_or_none()
+    
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
 @router.post("/make", response_model=User)
 def make_user(name: str):
     """
