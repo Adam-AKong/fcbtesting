@@ -123,8 +123,17 @@ def get_leaderboard():
     
     return characters
 
+class Returned_Character(BaseModel):
+    char_id: int
+    user_id: int
+    name: str
+    description: str
+    rating: float
+    strength: float
+    speed: float
+    health: float
 
-@router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/make", response_model=Returned_Character)
 def make_character(user_id: int, character: Character):
     """
     Create a new character.
@@ -132,10 +141,11 @@ def make_character(user_id: int, character: Character):
     # Placeholder for actual database call
     
     with db.engine.begin() as connection:
-        connection.execute(
+        char_id = connection.execute(
             sqlalchemy.text("""
                 INSERT INTO character (user_id, name, description, rating, strength, speed, health)
                 VALUES (:user_id, :name, :description, :rating, :strength, :speed, :health)
+                RETURNING id
             """),
             {
                 "user_id": user_id,
@@ -146,7 +156,20 @@ def make_character(user_id: int, character: Character):
                 "speed": character.speed,
                 "health": character.health,
             },
-        )
+        ).scalar_one()
+
+    new_character = Returned_Character(
+        char_id = char_id,
+        user_id = user_id,
+        name = character.name,
+        description = character.description,
+        rating = character.rating,
+        strength = character.strength,
+        speed = character.speed,
+        health = character.health
+    )
+
+    return new_character
 
 
 @router.post("/review/{char_id}", status_code=status.HTTP_204_NO_CONTENT)
