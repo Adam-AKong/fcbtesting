@@ -9,6 +9,7 @@ from src.api.models import User
 router = APIRouter(prefix="/user", tags=["User"])
 
 
+
 @router.get("/get/{user_id}", response_model=User)
 def get_user(user_id: int):
     """
@@ -20,7 +21,7 @@ def get_user(user_id: int):
         name="User Name",
     )
 
-@router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/make", response_model=User)
 def make_user(name: str):
     """
     Make a new user.
@@ -30,14 +31,21 @@ def make_user(name: str):
         raise HTTPException(status_code=400, detail="Name cannot be empty")
     # Save the user to the database
     with db.engine.begin() as connection:
-        connection.execute(
+        user_id = connection.execute(
             sqlalchemy.text("""
                 INSERT INTO "user" (name)
                 VALUES (:name)
+                RETURNING id
             """),
             {
              "name": name,
              },
-        )
+        ).scalar_one()
     
+    new_user = User(
+        id = user_id,
+        name = name
+    )
+    
+    return new_user
     
