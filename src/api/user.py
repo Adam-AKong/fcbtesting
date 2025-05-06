@@ -10,7 +10,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 
 
 
-@router.get("/get/{user_id}", response_model=User)
+@router.get("/get/by_id/{user_id}", response_model=User)
 def get_user(user_id: int):
     """
     Get User by ID.
@@ -33,7 +33,7 @@ def get_user(user_id: int):
 
     return user
 
-@router.get("/get/{username}", response_model=User)
+@router.get("/get/by_name/{username}", response_model=User)
 def get_user_by_name(username: str):
     """
     Get User by name.
@@ -43,7 +43,7 @@ def get_user_by_name(username: str):
         user = connection.execute(
             sqlalchemy.text("""
                 SELECT *
-                FROM user
+                FROM "user"
                 WHERE name = :username
             """),
             {
