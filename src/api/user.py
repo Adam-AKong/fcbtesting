@@ -20,7 +20,7 @@ def get_user(user_id: int):
         user = connection.execute(
             sqlalchemy.text("""
                 SELECT *
-                FROM user
+                FROM "user"
                 WHERE id = :user_id
             """),
             {
