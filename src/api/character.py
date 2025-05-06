@@ -72,7 +72,11 @@ def get_user_characters(user_id: int):
     ]
     return characters
 
-@router.get("/get_review/{character_id}", response_model=list[C_Review])
+class Returned_Review(BaseModel):
+    user_id: int
+    comment: str
+
+@router.get("/get_review/{character_id}", response_model=list[Returned_Review])
 def get_character_review(character_id: int):
     """
     Get all reviews for a given character referencing its id.
@@ -80,16 +84,25 @@ def get_character_review(character_id: int):
     with db.engine.begin() as connection:
         comments = connection.execute(
             sqlalchemy.text("""
-                SELECT comment
+                SELECT user_id, comment
                 FROM c_review
                 WHERE char_id = :char_id
             """),
             {
                 "char_id": character_id
             }
+        ).all()
+
+    all_comments = []
+    for comment in comments:
+        all_comments.append(
+            Returned_Review(
+                user_id = comment.user_id,
+                comment = comment.comment
+            )
         )
 
-        return comments
+    return all_comments
 
 
 @router.get("/leaderboard", response_model=list[Character])
@@ -188,7 +201,7 @@ def review_character(user_id: int, character_id: int, comment: str):
             """),
             {
                 "user_id": user_id,
-                "name": character_id,
+                "char_id": character_id,
                 "comment": comment
             },
         )
