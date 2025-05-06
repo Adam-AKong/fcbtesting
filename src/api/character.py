@@ -14,15 +14,26 @@ def get_character(character_id: int):
     """
     Get character by ID.
     """
-    # Placeholder for actual database call
+    
+    with db.engine.begin() as connection:
+        character = connection.execute(
+            sqlalchemy.text("""
+                SELECT id, name, description, rating, strength, speed, health
+                FROM character
+                WHERE id = :id
+            """),
+            {
+                "id": character_id
+            }
+        ).scalar_one()
+    
     character = Character(
-        id=character_id,
-        name="Character Name",
-        description="Character Description",
-        rating=0,
-        strength=0,
-        speed=0,
-        health=0,
+        name=character.name,
+        description=character.description,
+        rating=character.rating,
+        strength=character.strength,
+        speed=character.speed,
+        health=character.health,
     )
     return character
 
@@ -34,35 +45,38 @@ def get_user_characters(user_id: int):
     """
     Get all characters made by user.
     """
-    # Placeholder for actual database call
+
+    with db.engine.begin() as connection:
+        characters = connection.execute(
+            sqlalchemy.text("""
+                SELECT id, name, description, rating, strength, speed, health
+                FROM character
+                WHERE user_id = :user_id
+            """),
+            {
+                "user_id": user_id
+            }
+        ).all()
+    
     characters = [
         Character(
-            id=1,
-            name="Character 1",
-            description="Description 1",
-            rating=0,
-            strength=0,
-            speed=0,
-            health=0,
-        ),
-        Character(
-            id=2,
-            name="Character 2",
-            description="Description 2",
-            rating=0,
-            strength=0,
-            speed=0,
-            health=0,
-        ),
+            id=character.id,
+            name=character.name,
+            description=character.description,
+            rating=character.rating,
+            strength=character.strength,
+            speed=character.speed,
+            health=character.health,
+        )
+        for character in characters
     ]
     return characters
 
-@router.get("/get_review/{user_id}", response_model=list[C_Review])
+@router.get("/get_review/{character_id}", response_model=list[C_Review])
 def get_character_review(character_id: int):
     """
     Get all reviews for a given character referencing its id.
     """
-    # Placeholder for actual database call
     with db.engine.begin() as connection:
         comments = connection.execute(
             sqlalchemy.text("""
@@ -83,27 +97,30 @@ def get_leaderboard():
     """
     Get the leaderboard of characters.
     """
-    # Placeholder for actual database call
-    characters = [
+    
+    with db.engine.begin() as connection:
+        characters = connection.execute(
+            sqlalchemy.text("""
+                SELECT id, name, description, rating, strength, speed, health
+                FROM character
+                ORDER BY rating DESC
+                LIMIT 10
+            """)
+        ).all()
+    
+    characters = [ 
         Character(
-            id=1,
-            name="Character 1",
-            description="Description 1",
-            rating=5.0,
-            strength=10.0,
-            speed=8.0,
-            health=100.0,
-        ),
-        Character(
-            id=2,
-            name="Character 2",
-            description="Description 2",
-            rating=4.5,
-            strength=9.0,
-            speed=7.0,
-            health=90.0,
-        ),
+            id=character.id,
+            name=character.name,
+            description=character.description,
+            rating=character.rating,
+            strength=character.strength,
+            speed=character.speed,
+            health=character.health,
+        )
+        for character in characters
     ]
+    
     return characters
 
 
@@ -137,10 +154,9 @@ def review_character(user_id: int, character_id: int, comment: str):
     """
     Review a character.
     """
-    # Placeholder for actual database call
     if not comment:
         raise HTTPException(status_code=400, detail="Comment cannot be empty")
-    # Save the review to the database
+
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text("""
