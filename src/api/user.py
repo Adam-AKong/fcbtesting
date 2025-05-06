@@ -16,10 +16,22 @@ def get_user(user_id: int):
     Get User by ID.
     """
     # Placeholder for actual database call
-    user = User(
-        id=user_id,
-        name="User Name",
-    )
+    with db.engine.begin() as connection:
+        user = connection.execute(
+            sqlalchemy.text("""
+                SELECT *
+                FROM user
+                WHERE id = :user_id
+            """),
+            {
+             "user_id": user_id,
+             },
+        ).one_or_none()
+    
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
 
 @router.post("/make", response_model=User)
 def make_user(name: str):
@@ -46,6 +58,6 @@ def make_user(name: str):
         id = user_id,
         name = name
     )
-    
+
     return new_user
     
