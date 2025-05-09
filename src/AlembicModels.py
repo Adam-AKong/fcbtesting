@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import TIMESTAMP, Column, DateTime, Float, ForeignKey, Integer, String, func
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, func
+from sqlalchemy.sql.functions import now
 
 Base = declarative_base()
 
@@ -96,14 +97,19 @@ class Battle(Base):
     vote1 = Column(Integer, default = 0)
     vote2 = Column(Integer, default = 0)
     winner_id = Column(Integer, ForeignKey('character.id'), nullable=False) # How to set winner for a tie / no winners?
-    # start date
-    # end date
+    start_date = Column(DateTime, default=now())
+    end_date = Column(DateTime, default=now() + timedelta(days=24))
     
     # __table_args__ = (
-    #     # maybe we might need another table to actually store the votes
-    #     # that way users can't vote more than once
-    #       # vic: seconding this, but as a many:many table with a composite key
-    #       # to be able to see where a user has voted + how many votes a battle
-    #       # has
+    #
     # )   
     
+class BattleVotes(Base):
+    __tablename__ = "battle_votes"
+
+    battle_id = Column(Integer, ForeignKey('battle.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+
+    # __table_args__ = (
+    #
+    # )
