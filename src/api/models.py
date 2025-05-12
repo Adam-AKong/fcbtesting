@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -25,7 +26,6 @@ class F_Review(BaseModel):
     comment: str
     
 class Battle(BaseModel):
-    id: int
     user_id: int    
     char1_id: int
     char2_id: int
@@ -37,7 +37,7 @@ class BattleResult(BaseModel):
     char2_id: int
     vote1: int
     vote2: int
-    winner_id: int
+    winner_id: Optional[int]
     start: datetime
     end: datetime
     finished: bool

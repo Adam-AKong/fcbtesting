@@ -49,7 +49,7 @@ def get_battle_result(battle_id: int):
     """
     Get the result of a battle by its ID.
     """
-    with db.engine.begin as connection:
+    with db.engine.begin() as connection:
         battle = connection.execute(
             sqlalchemy.text(
                 """
@@ -107,7 +107,7 @@ def character_participation(character_id: int):
     Get a list of battles a character has fought in.
     """
     battles = []
-    with db.engine.begin as connection:
+    with db.engine.begin() as connection:
         participation = connection.execute(
             sqlalchemy.text(
                 """
@@ -139,7 +139,7 @@ def user_participation(user_id: int):
     """
     # Proper
     battles = []
-    with db.engine.begin as connection:
+    with db.engine.begin() as connection:
         participation = connection.execute(
             sqlalchemy.text(
                 """
@@ -173,7 +173,7 @@ def battle_vote(user_id: int, battle_id: int, character_id: int):
     vote1_i = 0
     vote2_i = 0
     
-    with db.engine.begin as connection:
+    with db.engine.begin() as connection:
         battle_info = connection.execute( # Check for unique battle and character existence
             sqlalchemy.text(
                 """
@@ -231,22 +231,26 @@ def battle_vote(user_id: int, battle_id: int, character_id: int):
         )
     pass
 
-@router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/make", response_model=BattleResult)
 def create_battle(Battle: Battle):
     """
-    Create a battle between two characters.
+    Create a battle between two characters and return its id.
     """
     # Assuming duration is in hours
+    
+    print("[DEBUG] Creating battle")
     
     start_time = datetime.now()
     end_time = start_time + timedelta(hours=Battle.duration)
     
-    with db.engine.begin as connection:
-        connection.execute(
+    with db.engine.begin() as connection:
+        print("[DEBUG] Inserting battle into database")
+        battle_id = connection.execute(
             sqlalchemy.text(
                 """
                 INSERT INTO battle (user_id, char1_id, char2_id, start_date, end_date)
-                VALUES (:user, :char1, :char2, :start, :end);
+                VALUES (:user, :char1, :char2, :start, :end)
+                RETURNING id
                 """
             ),
             [{"user": Battle.user_id,
@@ -255,5 +259,16 @@ def create_battle(Battle: Battle):
               "start": start_time,
               "end": end_time
               }]
-        )
-    pass
+        ).scalar_one()
+        
+    return BattleResult(
+        battle_id = int(battle_id),
+        char1_id = Battle.char1_id,
+        char2_id = Battle.char2_id,
+        vote1 = 0,
+        vote2 = 0,
+        winner_id = None,
+        start = start_time,
+        end = end_time,
+        finished = False
+    )
