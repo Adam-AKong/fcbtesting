@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import DateTime
 
-from src.api.models import Battle, Character
+from src.api.models import Battle, BattleResult, Character
 from src import database as db
 
 router = APIRouter(prefix="/battle", tags=["Battle"])
@@ -44,7 +44,7 @@ def calculate_winner(connection, battle: Battle) -> int:
     else:
         return battle.char2_id
 
-@router.get("/get/{battle_id}", response_model=Battle)
+@router.get("/get/{battle_id}", response_model=BattleResult)
 def get_battle_result(battle_id: int):
     """
     Get the result of a battle by its ID.
@@ -61,10 +61,18 @@ def get_battle_result(battle_id: int):
             [{"id": battle_id}]
         ).one()
         
+        
         if battle.end > datetime.now():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Battle is still ongoing."
+            return BattleResult(
+                battle_id=battle.id,
+                char1_id=battle.char1_id,
+                char2_id=battle.char2_id,
+                vote1=battle.vote1,
+                vote2=battle.vote2,
+                winner_id=None,
+                start=battle.start_date,
+                end=battle.end_date,
+                finished=False
             )
         
         if battle.winner_id is None:
@@ -81,14 +89,16 @@ def get_battle_result(battle_id: int):
                 [{"winner": winner, "id": battle.id}]
             )
     
-        return Battle(
-            id=battle.id,
-            user_id=battle.user_id,
+        return BattleResult(
+            battle_id=battle.id,
             char1_id=battle.char1_id,
             char2_id=battle.char2_id,
             vote1=battle.vote1,
             vote2=battle.vote2,
             winner_id=battle.winner_id,
+            start=battle.start_date,
+            end=battle.end_date,
+            finished=True
         )
 
 @router.get("/get/{character_id}", response_model=list[Battle])
@@ -222,23 +232,28 @@ def battle_vote(user_id: int, battle_id: int, character_id: int):
     pass
 
 @router.post("/make", status_code=status.HTTP_204_NO_CONTENT)
-def create_battle(user_id: int, character_1: int, character_2: int, start_date: datetime, duration: int):
+def create_battle(Battle: Battle):
     """
     Create a battle between two characters.
     """
     # Assuming duration is in hours
+    
+    start_time = datetime.now()
+    end_time = start_time + timedelta(hours=Battle.duration)
+    
     with db.engine.begin as connection:
         connection.execute(
             sqlalchemy.text(
                 """
-                INSERT INTO battle (user_id, char1_id, char2_id, start, end)
+                INSERT INTO battle (user_id, char1_id, char2_id, start_date, end_date)
                 VALUES (:user, :char1, :char2, :start, :end);
                 """
             ),
-            [{"user": user_id,
-              "char1": character_1,
-              "char2": character_2,
-              "start": start_date,
-              "end": start_date + timedelta(hours=duration)}]
+            [{"user": Battle.user_id,
+              "char1": Battle.char1_id,
+              "char2": Battle.char2_id,
+              "start": start_time,
+              "end": end_time
+              }]
         )
     pass
