@@ -10,6 +10,40 @@ from src import database as db
 
 router = APIRouter(prefix="/battle", tags=["Battle"])
 
+
+
+def calculate_winner(connection, battle: Battle) -> int:
+    """
+    Calculate the winner of a battle based on the votes and character stats.
+    """
+    character1 = connection.execute(
+        sqlalchemy.text(
+            """
+            SELECT *
+            FROM character
+            WHERE id = :id
+            """
+        ),
+        [{"id": battle.char1_id}]
+    ).one()
+    character2 = connection.execute(
+        sqlalchemy.text(
+            """
+            SELECT *
+            FROM character
+            WHERE id = :id
+            """
+        ),
+        [{"id": battle.char2_id}]
+    ).one()
+    # Calculate the winner based on the votes and character stats
+    character1_score = (character2.health / (character1.strength * character1.speed)) * (0.9 ^ battle.vote1)
+    character2_score = (character1.health / (character2.strength * character2.speed)) * (0.9 ^ battle.vote2)
+    if character1_score < character2_score:
+        return battle.char1_id
+    else:
+        return battle.char2_id
+
 @router.get("/get/{battle_id}", response_model=Battle)
 def get_battle_result(battle_id: int):
     """
@@ -26,6 +60,20 @@ def get_battle_result(battle_id: int):
             ),
             [{"id": battle_id}]
         ).one()
+        
+        if battle.winner_id is None:
+            # Calculate the winner if not already set
+            winner = calculate_winner(connection, battle)
+            connection.execute(
+                sqlalchemy.text(
+                    """
+                    UPDATE battle
+                    SET winner_id = :winner
+                    WHERE id = :id
+                    """
+                ),
+                [{"winner": winner, "id": battle.id}]
+            )
     
         return Battle(
             id=battle.id,
