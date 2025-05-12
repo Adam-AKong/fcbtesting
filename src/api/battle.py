@@ -403,14 +403,20 @@ def battle_vote(user_id: int, battle_id: int, character_id: int):
 def create_battle(Battle: Battle):
     """
     Create a battle between two characters and return its id.
+    Create a battle between two characters and return its id.
     """
     # Assuming duration is in hours
+    
+    print("[DEBUG] Creating battle")
     
     print("[DEBUG] Creating battle")
     
     start_time = datetime.now()
     end_time = start_time + timedelta(hours=Battle.duration)
     
+    with db.engine.begin() as connection:
+        print("[DEBUG] Inserting battle into database")
+        battle_id = connection.execute(
     with db.engine.begin() as connection:
         print("[DEBUG] Inserting battle into database")
         battle_id = connection.execute(
