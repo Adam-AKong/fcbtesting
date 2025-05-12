@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import sqlalchemy
 from src import database as db
 
-from src.api.models import Character, C_Review
+from src.api.models import Character, C_Review, CharacterMakeResponse, Franchise, FranchiseCharacterAssignment, Returned_Review
 
 
 router = APIRouter(prefix="/character", tags=["Character"])
@@ -71,9 +71,7 @@ def get_user_characters(user_id: int):
     ]
     return characters
 
-class Returned_Review(BaseModel):
-    user_id: int
-    comment: str
+
 
 @router.get("/get_review/{character_id}", response_model=list[Returned_Review])
 def get_character_review(character_id: int):
@@ -135,18 +133,10 @@ def get_leaderboard():
     
     return characters
 
-class Returned_Character(BaseModel):
-    char_id: int
-    user_id: int
-    name: str
-    description: str
-    rating: float
-    strength: float
-    speed: float
-    health: float
 
-@router.post("/make", response_model=Returned_Character)
-def make_character(user_id: int, character: Character):
+
+@router.post("/make", response_model=CharacterMakeResponse)
+def make_character(user_id: int, character: Character, franchiselist: list[FranchiseCharacterAssignment]):
     """
     Create a new character.
     """
@@ -163,25 +153,83 @@ def make_character(user_id: int, character: Character):
                 "user_id": user_id,
                 "name": character.name,
                 "description": character.description,
-                "rating": character.rating,
+                "rating": 0,
                 "strength": character.strength,
                 "speed": character.speed,
                 "health": character.health,
             },
         ).scalar_one()
+        # Assign character to franchises
+        for franchise in franchiselist:
+            #check if franchise exists
+            franchise_id = connection.execute(
+                sqlalchemy.text("""
+                    SELECT id
+                    FROM franchise
+                    WHERE id = :franchise_id
+                """),
+                {
+                    "franchise_id": franchise.franchise_id
+                }
+            ).scalar_one_or_none()
+            
+            if franchise_id is None:
+                raise HTTPException(status_code=404, detail=f"Franchise id={franchise} not found")
+            
+            connection.execute(
+                sqlalchemy.text("""
+                    INSERT INTO char_fran (char_id, franchise_id)
+                    VALUES (:char_id, :franchise_id)
+                """),
+                {
+                    "char_id": char_id,
+                    "franchise_id": franchise.franchise_id
+                }
+            )
+            
 
-    new_character = Returned_Character(
+    new_character = CharacterMakeResponse(
         char_id = char_id,
         user_id = user_id,
         name = character.name,
         description = character.description,
-        rating = character.rating,
+        rating = 0,
         strength = character.strength,
         speed = character.speed,
         health = character.health
     )
 
     return new_character
+
+@router.get("/get/franchise/{char_id}", response_model=list[Franchise])
+def get_character_franchises(char_id: int):
+    """
+    Get all franchises for a given character referencing its id.
+    """
+    with db.engine.begin() as connection:
+        franchises = connection.execute(
+            sqlalchemy.text("""
+                SELECT f.id, f.name, f.description
+                FROM franchise f
+                JOIN char_fran cf ON f.id = cf.franchise_id
+                WHERE cf.char_id = :char_id
+            """),
+            {
+                "char_id": char_id
+            }
+        ).all()
+
+    all_franchises = []
+    for franchise in franchises:
+        all_franchises.append(
+            Franchise(
+                id = franchise.id,
+                name = franchise.name,
+                description = franchise.description
+            )
+        )
+
+    return all_franchises
 
 
 @router.post("/review/{char_id}", status_code=status.HTTP_204_NO_CONTENT)

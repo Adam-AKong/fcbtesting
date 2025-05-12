@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import sqlalchemy
 from src import database as db
 
-from src.api.models import Franchise
+from src.api.models import Franchise, FranchiseMakeResponse, Returned_Review
 
 router = APIRouter(prefix="/franchise", tags=["Franchise"])
 
@@ -12,7 +12,7 @@ class Returned_Franchise(BaseModel):
     name: str
     description: str
 
-@router.get("/get/{franchise_id}", response_model=Franchise)
+@router.get("/get/{franchise_id}", response_model=FranchiseMakeResponse)
 def get_franchise(franchise_id: int):
     """
     Get franchise by ID.
@@ -21,24 +21,28 @@ def get_franchise(franchise_id: int):
     with db.engine.begin() as connection:
         franchise = connection.execute(
             sqlalchemy.text("""
-                SELECT NAME, DESCRIPTION
+                SELECT name, description
                 FROM franchise
                 WHERE id = :id
             """),
             {
                 "id": franchise_id
                 }
-        ).scalar_one()
+        ).one()
+        
+        if franchise is None:
+            raise HTTPException(status_code=404, detail="Franchise not found")
+        
+        return FranchiseMakeResponse(
+            id=franchise_id,
+            name=franchise.name,
+            description=franchise.description
+        )
         
 
-    franchise = Returned_Franchise(
-        id=franchise_id,
-        name=franchise.name,
-        description=franchise.description,
-    )
-    return franchise
 
-@router.post("/make", response_model=Franchise)
+
+@router.post("/make", response_model=FranchiseMakeResponse)
 def make_franchise(franchise: Franchise):
     """
     Create a new franchise.
@@ -56,7 +60,7 @@ def make_franchise(franchise: Franchise):
                 "description": franchise.description,
             },
         ).scalar_one()
-    new_franchise = Returned_Franchise(
+    new_franchise = FranchiseMakeResponse(
         id = fran_id,
         name = franchise.name,
         description = franchise.description
@@ -73,17 +77,42 @@ def make_franchise_review(user_id: int, franchise_id: int, comment: str):
         raise HTTPException(status_code=400, detail="Comment cannot be empty")
 
     with db.engine.begin() as connection:
-        rev_id = connection.execute(
+        connection.execute(
             sqlalchemy.text("""
                 INSERT INTO f_review (user_id, franchise_id, comment)
                 VALUES (:user_id, :franchise_id, :comment)
-                RETURNING rev_id
             """),
             {
                 "user_id": user_id,
                 "franchise_id": franchise_id,
                 "comment": comment,
             },
-        ).scalar_one()
+        )
+        
+@router.get("/get_review/{franchise_id}", response_model=list[Returned_Review])
+def get_franchise_review(franchise_id: int):
+    """
+    Get all reviews for a given franchise referencing its id.
+    """
+    with db.engine.begin() as connection:
+        comments = connection.execute(
+            sqlalchemy.text("""
+                SELECT user_id, comment
+                FROM f_review
+                WHERE franchise_id = :fran_id
+            """),
+            {
+                "fran_id": franchise_id
+            }
+        ).all()
 
-    return rev_id
+    all_comments = []
+    for comment in comments:
+        all_comments.append(
+            Returned_Review(
+                user_id = comment.user_id,
+                comment = comment.comment
+            )
+        )
+
+    return all_comments

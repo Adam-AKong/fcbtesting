@@ -1,18 +1,36 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 
 class Character(BaseModel):
     name: str
     description: str
-    rating: float
     strength: float
     speed: float
     health: float
     
+class CharacterMakeResponse(BaseModel):
+    char_id: int
+    user_id: int
+    name: str
+    description: str
+    rating: float
+    strength: float
+    speed: float
+    health: float 
+    
 class Franchise(BaseModel):
     name: str
     description: str
+    
+class FranchiseMakeResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class FranchiseCharacterAssignment(BaseModel):
+    franchise_id: int
     
 class C_Review(BaseModel):
     user_id: int
@@ -24,12 +42,23 @@ class F_Review(BaseModel):
     franchise_id: int
     comment: str
     
+class Returned_Review(BaseModel):
+    user_id: int
+    comment: str
+    
 class Battle(BaseModel):
-    id: int
     user_id: int    
     char1_id: int
     char2_id: int
     duration: int
+    
+class BattleCreateResponse(BaseModel):
+    battle_id: int
+    char1_id: int
+    char2_id: int
+    duration: int
+    start: datetime
+    end: datetime
     
 class BattleResult(BaseModel):
     battle_id: int
@@ -37,7 +66,7 @@ class BattleResult(BaseModel):
     char2_id: int
     vote1: int
     vote2: int
-    winner_id: int
+    winner_id: Optional[int]
     start: datetime
     end: datetime
     finished: bool
