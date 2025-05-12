@@ -24,8 +24,12 @@ class F_Review(BaseModel):
     comment: str
     
 class Battle(BaseModel):
+    id: int
+    user_id: int    
     char1_id: int
     char2_id: int
+    vote1: int
+    vote2: int
     winner_id: int
     
     
