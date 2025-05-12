@@ -56,11 +56,10 @@ def get_user_characters(user_id: int):
             {
                 "user_id": user_id
             }
-        ).all()
+        ).scalar_one()
     
     characters = [
         Character(
-            id=character.id,
             name=character.name,
             description=character.description,
             rating=character.rating,
