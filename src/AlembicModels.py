@@ -107,6 +107,7 @@ class Battle(Base):
 class BattleVotes(Base):
     __tablename__ = "battle_votes"
 
+    id = Column(Integer, autoincrement=True, primary_key=True)
     battle_id = Column(Integer, ForeignKey('battle.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
