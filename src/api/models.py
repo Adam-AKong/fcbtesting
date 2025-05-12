@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -31,6 +32,8 @@ class Battle(BaseModel):
     vote1: int
     vote2: int
     winner_id: int
+    start_date: datetime
+    duration: int
     
     
 class User(BaseModel):

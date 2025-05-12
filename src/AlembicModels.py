@@ -96,7 +96,7 @@ class Battle(Base):
     char2_id = Column(Integer, ForeignKey('character.id'), nullable=False)
     vote1 = Column(Integer, default = 0)
     vote2 = Column(Integer, default = 0)
-    winner_id = Column(Integer, ForeignKey('character.id'), nullable=False) # How to set winner for a tie / no winners?
+    winner_id = Column(Integer, ForeignKey('character.id'), nullable=True) # How to set winner for a tie / no winners?
     start_date = Column(DateTime, default=now())
     end_date = Column(DateTime, default=now() + timedelta(days=24))
     
