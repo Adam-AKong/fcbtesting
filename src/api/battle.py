@@ -417,14 +417,10 @@ def create_battle(Battle: Battle):
     with db.engine.begin() as connection:
         print("[DEBUG] Inserting battle into database")
         battle_id = connection.execute(
-    with db.engine.begin() as connection:
-        print("[DEBUG] Inserting battle into database")
-        battle_id = connection.execute(
             sqlalchemy.text(
                 """
-                INSERT INTO battle (user_id, char1_id, char2_id, vote1, vote2, start_date, end_date)
-                VALUES (:user, :char1, :char2, :vote1, :vote2, :start, :end)
-                RETURNING id
+                INSERT INTO battle (user_id, char1_id, char2_id, start_date, end_date)
+                VALUES (:user, :char1, :char2, :start, :end);
                 """
             ),
             [{"user": Battle.user_id,
@@ -435,13 +431,5 @@ def create_battle(Battle: Battle):
               "start": start_time,
               "end": end_time
               }]
-        ).scalar_one()
-        
-    return BattleCreateResponse(
-        battle_id=battle_id,
-        char1_id=Battle.char1_id,
-        char2_id=Battle.char2_id,
-        duration=Battle.duration,
-        start=start_time,
-        end=end_time
-    )
+        )
+    pass
