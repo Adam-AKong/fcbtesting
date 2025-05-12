@@ -61,6 +61,12 @@ def get_battle_result(battle_id: int):
             [{"id": battle_id}]
         ).one()
         
+        if battle.end > datetime.now():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Battle is still ongoing."
+            )
+        
         if battle.winner_id is None:
             # Calculate the winner if not already set
             winner = calculate_winner(connection, battle)
