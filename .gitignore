@@ -8,4 +8,3 @@ venv/
 .idea/
 src/__pycache__/AlembicModels.cpython-313.pyc
 
-alembic/*
