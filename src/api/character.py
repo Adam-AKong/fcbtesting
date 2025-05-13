@@ -41,36 +41,6 @@ def get_character_by_id(character_id: int):
 
     return the_character
 
-@router.get("/get/by_name/{character_name}", response_model=ReturnedCharacter)
-def get_character_by_name(character_name: str):
-    """
-    Get character by name.
-    """
-    
-    with db.engine.begin() as connection:
-        character = connection.execute(
-            sqlalchemy.text("""
-                SELECT id, user_id, name, description, rating, strength, speed, health
-                FROM character
-                WHERE name = :name
-            """),
-            {
-                "name": character_name
-            }
-        ).one()
-    
-    the_character = ReturnedCharacter(
-        char_id=character.id,
-        user_id=character.user_id,
-        name=character_name,
-        description=character.description,
-        rating=character.rating,
-        strength=character.strength,
-        speed=character.speed,
-        health=character.health,
-    )
-    return the_character
-
 
 @router.get("/list/{user_id}", response_model=list[ReturnedCharacter])
 def get_user_characters(user_id: int):
@@ -236,7 +206,7 @@ def make_character(user_id: int, character: Character, franchiselist: list[Franc
 
     return new_character
 
-@router.get("/get/franchise/{char_id}", response_model=list[Franchise])
+@router.get("/get/franchise/{character_id}", response_model=list[Franchise])
 def get_character_franchises(char_id: int):
     """
     Get all franchises for a given character referencing its id.
@@ -266,7 +236,7 @@ def get_character_franchises(char_id: int):
     return all_franchises
 
 
-@router.post("/review/{char_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/review/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
 def review_character(user_id: int, character_id: int, comment: str):
     """
     Review a character.
