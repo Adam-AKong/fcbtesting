@@ -10,6 +10,16 @@ class Character(BaseModel):
     speed: float
     health: float
     
+class ReturnedCharacter(BaseModel):
+    char_id: int
+    user_id: int
+    name: str
+    description: str
+    rating: float
+    strength: float
+    speed: float
+    health: float 
+    
 class CharacterMakeResponse(BaseModel):
     char_id: int
     user_id: int

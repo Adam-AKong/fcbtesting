@@ -7,10 +7,7 @@ from src.api.models import Franchise, FranchiseMakeResponse, Returned_Review
 
 router = APIRouter(prefix="/franchise", tags=["Franchise"])
 
-class Returned_Franchise(BaseModel):
-    id: int
-    name: str
-    description: str
+
 
 @router.get("/get/by_id/{franchise_id}", response_model=FranchiseMakeResponse)
 def get_franchise_by_id(franchise_id: int):

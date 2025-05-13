@@ -3,20 +3,12 @@ from pydantic import BaseModel
 import sqlalchemy
 from src import database as db
 
-from src.api.models import Character, C_Review, CharacterMakeResponse, Franchise, FranchiseCharacterAssignment, Returned_Review
+from src.api.models import Character, C_Review, CharacterMakeResponse, Franchise, FranchiseCharacterAssignment, Returned_Review, ReturnedCharacter
 
 
 router = APIRouter(prefix="/character", tags=["Character"])
 
-class ReturnedCharacter(BaseModel):
-    char_id: int
-    user_id: int
-    name: str
-    description: str
-    rating: float
-    strength: float
-    speed: float
-    health: float 
+
 
 @router.get("/get/by_id/{character_id}", response_model=ReturnedCharacter)
 def get_character_by_id(character_id: int):
@@ -244,11 +236,6 @@ def make_character(user_id: int, character: Character, franchiselist: list[Franc
 
     return new_character
 
-class Returned_Franchise(BaseModel):
-    id: int
-    name: str
-    description: str
-
 @router.get("/get/franchise/{char_id}", response_model=list[Franchise])
 def get_character_franchises(char_id: int):
     """
@@ -257,7 +244,7 @@ def get_character_franchises(char_id: int):
     with db.engine.begin() as connection:
         franchises = connection.execute(
             sqlalchemy.text("""
-                SELECT f.id, f.name, f.description
+                SELECT f.name, f.description
                 FROM franchise f
                 JOIN char_fran cf ON f.id = cf.franchise_id
                 WHERE cf.char_id = :char_id
@@ -270,8 +257,7 @@ def get_character_franchises(char_id: int):
     all_franchises = []
     for franchise in franchises:
         all_franchises.append(
-            Returned_Franchise(
-                id = franchise.id,
+            Franchise(
                 name = franchise.name,
                 description = franchise.description
             )
