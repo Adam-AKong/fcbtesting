@@ -50,8 +50,8 @@ class Battle(BaseModel):
     user_id: int    
     char1_id: int
     char2_id: int
-    duration: int
-    
+    duration: int # Hours is how its currently implemented across battle.py
+
 class BattleCreateResponse(BaseModel):
     battle_id: int
     char1_id: int
@@ -64,8 +64,6 @@ class BattleResult(BaseModel):
     battle_id: int
     char1_id: int
     char2_id: int
-    vote1: int
-    vote2: int
     winner_id: Optional[int]
     start: datetime
     end: datetime

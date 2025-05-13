@@ -12,8 +12,8 @@ class Returned_Franchise(BaseModel):
     name: str
     description: str
 
-@router.get("/get/{franchise_id}", response_model=FranchiseMakeResponse)
-def get_franchise(franchise_id: int):
+@router.get("/get/by_id/{franchise_id}", response_model=FranchiseMakeResponse)
+def get_franchise_by_id(franchise_id: int):
     """
     Get franchise by ID.
     """
@@ -40,7 +40,32 @@ def get_franchise(franchise_id: int):
         )
         
 
-
+@router.get("/get/by_name/{franchise_name}", response_model=FranchiseMakeResponse)
+def get_franchise_by_name(franchise_name: str):
+    """
+    Get franchise by name.
+    """
+    
+    with db.engine.begin() as connection:
+        franchise = connection.execute(
+            sqlalchemy.text("""
+                SELECT id, name, description
+                FROM franchise
+                WHERE name = :franchise_name
+            """),
+            {
+                "franchise_name": franchise_name
+                }
+        ).one()
+        
+        if franchise is None:
+            raise HTTPException(status_code=404, detail="Franchise not found")
+        
+        return FranchiseMakeResponse(
+            id=franchise.id,
+            name=franchise_name,
+            description=franchise.description
+        )
 
 @router.post("/make", response_model=FranchiseMakeResponse)
 def make_franchise(franchise: Franchise):

@@ -8,9 +8,18 @@ from src.api.models import Character, C_Review, CharacterMakeResponse, Franchise
 
 router = APIRouter(prefix="/character", tags=["Character"])
 
+class ReturnedCharacter(BaseModel):
+    char_id: int
+    user_id: int
+    name: str
+    description: str
+    rating: float
+    strength: float
+    speed: float
+    health: float 
 
-@router.get("/get/{character_id}", response_model=Character)
-def get_character(character_id: int):
+@router.get("/get/by_id/{character_id}", response_model=ReturnedCharacter)
+def get_character_by_id(character_id: int):
     """
     Get character by ID.
     """
@@ -18,16 +27,18 @@ def get_character(character_id: int):
     with db.engine.begin() as connection:
         character = connection.execute(
             sqlalchemy.text("""
-                SELECT id, name, description, rating, strength, speed, health
+                SELECT id, user_id, name, description, rating, strength, speed, health
                 FROM character
                 WHERE id = :id
             """),
             {
                 "id": character_id
             }
-        ).scalar_one()
+        ).one()
     
-    character = Character(
+    the_character = ReturnedCharacter(
+        char_id=character_id,
+        user_id=character.user_id,
         name=character.name,
         description=character.description,
         rating=character.rating,
@@ -35,12 +46,41 @@ def get_character(character_id: int):
         speed=character.speed,
         health=character.health,
     )
-    return character
+
+    return the_character
+
+@router.get("/get/by_name/{character_name}", response_model=ReturnedCharacter)
+def get_character_by_name(character_name: str):
+    """
+    Get character by name.
+    """
+    
+    with db.engine.begin() as connection:
+        character = connection.execute(
+            sqlalchemy.text("""
+                SELECT id, user_id, name, description, rating, strength, speed, health
+                FROM character
+                WHERE name = :name
+            """),
+            {
+                "name": character_name
+            }
+        ).one()
+    
+    the_character = ReturnedCharacter(
+        char_id=character.id,
+        user_id=character.user_id,
+        name=character_name,
+        description=character.description,
+        rating=character.rating,
+        strength=character.strength,
+        speed=character.speed,
+        health=character.health,
+    )
+    return the_character
 
 
-
-
-@router.get("/list/{user_id}", response_model=list[Character])
+@router.get("/list/{user_id}", response_model=list[ReturnedCharacter])
 def get_user_characters(user_id: int):
     """
     Get all characters made by user.
@@ -49,17 +89,19 @@ def get_user_characters(user_id: int):
     with db.engine.begin() as connection:
         characters = connection.execute(
             sqlalchemy.text("""
-                SELECT id, name, description, rating, strength, speed, health
+                SELECT id, user_id, name, description, rating, strength, speed, health
                 FROM character
                 WHERE user_id = :user_id
             """),
             {
                 "user_id": user_id
             }
-        ).scalar_one()
+        ).all()
     
-    characters = [
-        Character(
+    user_characters = [
+        ReturnedCharacter(
+            char_id=character.id,
+            user_id=character.user_id,
             name=character.name,
             description=character.description,
             rating=character.rating,
@@ -69,7 +111,7 @@ def get_user_characters(user_id: int):
         )
         for character in characters
     ]
-    return characters
+    return user_characters
 
 
 
@@ -102,7 +144,7 @@ def get_character_review(character_id: int):
     return all_comments
 
 
-@router.get("/leaderboard", response_model=list[Character])
+@router.get("/leaderboard", response_model=list[CharacterMakeResponse])
 def get_leaderboard():
     """
     Get the leaderboard of characters.
@@ -111,7 +153,7 @@ def get_leaderboard():
     with db.engine.begin() as connection:
         characters = connection.execute(
             sqlalchemy.text("""
-                SELECT id, name, description, rating, strength, speed, health
+                SELECT id, user_id, name, description, rating, strength, speed, health
                 FROM character
                 ORDER BY rating DESC
                 LIMIT 10
@@ -119,8 +161,9 @@ def get_leaderboard():
         ).all()
     
     characters = [ 
-        Character(
-            id=character.id,
+        ReturnedCharacter(
+            char_id=character.id,
+            user_id=character.user_id,
             name=character.name,
             description=character.description,
             rating=character.rating,
@@ -201,6 +244,11 @@ def make_character(user_id: int, character: Character, franchiselist: list[Franc
 
     return new_character
 
+class Returned_Franchise(BaseModel):
+    id: int
+    name: str
+    description: str
+
 @router.get("/get/franchise/{char_id}", response_model=list[Franchise])
 def get_character_franchises(char_id: int):
     """
@@ -222,7 +270,7 @@ def get_character_franchises(char_id: int):
     all_franchises = []
     for franchise in franchises:
         all_franchises.append(
-            Franchise(
+            Returned_Franchise(
                 id = franchise.id,
                 name = franchise.name,
                 description = franchise.description

@@ -12,7 +12,6 @@ from src import database as db
 router = APIRouter(prefix="/battle", tags=["Battle"])
 
 
-
 def calculate_winner(connection, battle: Battle) -> int:
     """
     Calculate the winner of a battle based on the votes and character stats.
@@ -39,8 +38,8 @@ def calculate_winner(connection, battle: Battle) -> int:
     ).one()
     
     # Calculate the winner based on the votes and character stats
-    character1_score = (character2.health / (character1.strength * character1.speed)) * (pow(0.9, battle.vote1))
-    character2_score = (character1.health / (character2.strength * character2.speed)) * (pow(0.9, battle.vote2))
+    character1_score = (character2.health / (character1.strength * character1.speed))
+    character2_score = (character1.health / (character2.strength * character2.speed))
     if character1_score < character2_score:
         # Character 1 wins
         # Increase the rating of the winner
@@ -93,8 +92,6 @@ def get_battle_result(battle_id: int):
                 battle_id=battle.id,
                 char1_id=battle.char1_id,
                 char2_id=battle.char2_id,
-                vote1=battle.vote1,
-                vote2=battle.vote2,
                 winner_id=None,
                 start=battle.start_date,
                 end=battle.end_date,
@@ -103,7 +100,12 @@ def get_battle_result(battle_id: int):
         
         if battle.winner_id is None:
             # Calculate the winner if not already set
-            winner = calculate_winner(connection, battle)
+            winner = calculate_winner(connection, Battle(
+                    user_id = battle.user_id,
+                    char1_id = battle.char1_id,
+                    char2_id = battle.char2_id,
+                    duration = int((battle.end_date - battle.start_date).total_seconds()//3600)
+                ))
             connection.execute(
                 sqlalchemy.text(
                     """
@@ -118,8 +120,6 @@ def get_battle_result(battle_id: int):
                 battle_id=battle.id,
                 char1_id=battle.char1_id,
                 char2_id=battle.char2_id,
-                vote1=battle.vote1,
-                vote2=battle.vote2,
                 winner_id=winner,
                 start=battle.start_date,
                 end=battle.end_date,
@@ -130,8 +130,6 @@ def get_battle_result(battle_id: int):
             battle_id=battle.id,
             char1_id=battle.char1_id,
             char2_id=battle.char2_id,
-            vote1=battle.vote1,
-            vote2=battle.vote2,
             winner_id=battle.winner_id,
             start=battle.start_date,
             end=battle.end_date,
@@ -174,7 +172,12 @@ def character_participation(character_id: int):
             # Check if the winner is set
             if r.winner_id is None and finished:
                 print("[DEBUG] Winner is not set, calculating winner")
-                winner = calculate_winner(connection, r)
+                winner = calculate_winner(connection, Battle(
+                    user_id = r.user_id,
+                    char1_id = r.char1_id,
+                    char2_id = r.char2_id,
+                    duration = int((r.end_date - r.start_date).total_seconds()//3600)                
+                ))
                 connection.execute(
                     sqlalchemy.text(
                         """
@@ -191,8 +194,6 @@ def character_participation(character_id: int):
                         battle_id=r.id,
                         char1_id=r.char1_id,
                         char2_id=r.char2_id,
-                        vote1=r.vote1,
-                        vote2=r.vote2,
                         winner_id=winner,
                         start=r.start_date,
                         end=r.end_date,
@@ -207,8 +208,6 @@ def character_participation(character_id: int):
                         battle_id=r.id,
                         char1_id=r.char1_id,
                         char2_id=r.char2_id,
-                        vote1=r.vote1,
-                        vote2=r.vote2,
                         winner_id=None,
                         start=r.start_date,
                         end=r.end_date,
@@ -223,8 +222,6 @@ def character_participation(character_id: int):
                         battle_id=r.id,
                         char1_id=r.char1_id,
                         char2_id=r.char2_id,
-                        vote1=r.vote1,
-                        vote2=r.vote2,
                         winner_id=r.winner_id,
                         start=r.start_date,
                         end=r.end_date,
@@ -267,7 +264,12 @@ def user_participation(user_id: int):
             # Check if the winner is set
             if r.winner_id is None:
                 # Calculate the winner if not already set
-                winner = calculate_winner(connection, r)
+                winner = calculate_winner(connection, Battle(
+                    user_id = r.user_id,
+                    char1_id = r.char1_id,
+                    char2_id = r.char2_id,
+                    duration = int((r.end_date - r.start_date).total_seconds()//3600)
+                ))
                 connection.execute(
                     sqlalchemy.text(
                         """
@@ -284,8 +286,6 @@ def user_participation(user_id: int):
                         battle_id=r.id,
                         char1_id=r.char1_id,
                         char2_id=r.char2_id,
-                        vote1=r.vote1,
-                        vote2=r.vote2,
                         winner_id=winner,
                         start=r.start_date,
                         end=r.end_date,
@@ -299,8 +299,6 @@ def user_participation(user_id: int):
                         battle_id=r.id,
                         char1_id=r.char1_id,
                         char2_id=r.char2_id,
-                        vote1=r.vote1,
-                        vote2=r.vote2,
                         winner_id=r.winner_id,
                         start=r.start_date,
                         end=r.end_date,
@@ -400,19 +398,16 @@ def battle_vote(user_id: int, battle_id: int, character_id: int):
             raise HTTPException(status_code=400, detail="Character not in battle")
 
 @router.post("/make", response_model=BattleCreateResponse)
-def create_battle(Battle: Battle):
+def create_battle(battle: Battle):
     """
-    Create a battle between two characters and return its id.
     Create a battle between two characters and return its id.
     """
     # Assuming duration is in hours
     
     print("[DEBUG] Creating battle")
-    
-    print("[DEBUG] Creating battle")
-    
+        
     start_time = datetime.now()
-    end_time = start_time + timedelta(hours=Battle.duration)
+    end_time = start_time + timedelta(hours=battle.duration)
     
     with db.engine.begin() as connection:
         print("[DEBUG] Inserting battle into database")
@@ -420,16 +415,23 @@ def create_battle(Battle: Battle):
             sqlalchemy.text(
                 """
                 INSERT INTO battle (user_id, char1_id, char2_id, start_date, end_date)
-                VALUES (:user, :char1, :char2, :start, :end);
+                VALUES (:user, :char1, :char2, :start, :end)
+                RETURNING id
                 """
             ),
-            [{"user": Battle.user_id,
-              "char1": Battle.char1_id,
-              "char2": Battle.char2_id,
-              "vote1": 0,
-              "vote2": 0,
+            [{"user": battle.user_id,
+              "char1": battle.char1_id,
+              "char2": battle.char2_id,
               "start": start_time,
               "end": end_time
               }]
-        )
-    pass
+        ).scalar_one()
+    
+    return BattleCreateResponse(
+        battle_id = battle_id,
+        char1_id = battle.char1_id,
+        char2_id = battle.char1_id,
+        duration = battle.duration,
+        start = start_time,
+        end = end_time,
+    )
