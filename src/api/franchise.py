@@ -67,16 +67,13 @@ def make_franchise(franchise: Franchise):
     """
     Create a new franchise.
     """
-    
-    # Note that we have to make sure there is NOT more than 1 franchise at a time, otherwise it will cause issues
-    # with the other SQL statements here.
+
+    # We need to add later that there can only be 1 franchise
     with db.engine.begin() as connection:
         fran_id = connection.execute(
             sqlalchemy.text("""
                 INSERT INTO franchise (name, description)
                 VALUES (:name, :description)
-                ON CONFLICT (name)
-                DO UPDATE SET description = EXCLUDED.description
                 RETURNING id
             """),
             {
