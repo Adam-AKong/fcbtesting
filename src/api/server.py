@@ -3,22 +3,13 @@ from src.api import battle, character, franchise, user
 from starlette.middleware.cors import CORSMiddleware
 
 description = """
-Premier Database for all youfictional character needs.
+Premier Database for all your fictional character needs.
 """
 tags_metadata = [
-    {"name": "cart", "description": "Place potion orders."},
-    {"name": "catalog", "description": "View the available potions."},
-    {"name": "bottler", "description": "Bottle potions from the raw magical elixir."},
-    {
-        "name": "barrels",
-        "description": "Buy barrels of raw magical elixir for making potions.",
-    },
-    {"name": "admin", "description": "Where you reset the game state."},
-    {"name": "info", "description": "Get updates on time"},
-    {
-        "name": "inventory",
-        "description": "Get the current inventory of shop and buying capacity.",
-    },
+    {"name": "battle", "description": "Create, vote, and view battles here."},
+    {"name": "character", "description": "Create characters with fun stats!"},
+    {"name": "franchise", "description": "Create franchises."},
+    {"name": "user", "description": "Create new users."},
 ]
 
 app = FastAPI(
@@ -27,8 +18,8 @@ app = FastAPI(
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
     contact={
-        "name": "Adam Kong",
-        "email": "aakong@calpoly.edu",
+        "name": "Adam Kong, Brian Kaplan, Vic Grigoryev",
+        "email": "aakong@calpoly.edu, bhkaplan@calpoly.edu, vgrigory@calpoly.edu",
     },
     openapi_tags=tags_metadata,
 )
