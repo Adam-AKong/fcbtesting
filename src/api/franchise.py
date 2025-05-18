@@ -1,11 +1,15 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 import sqlalchemy
 from src import database as db
+from src.api import auth
 
 from src.api.models import Franchise, FranchiseMakeResponse, Returned_Review
 
-router = APIRouter(prefix="/franchise", tags=["Franchise"])
+router = APIRouter(
+    prefix="/franchise", 
+    tags=["Franchise"],
+    dependencies=[Depends(auth.get_api_key)],)
 
 @router.get("/get/by_id/{franchise_id}", response_model=FranchiseMakeResponse)
 def get_franchise_by_id(franchise_id: int):

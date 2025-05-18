@@ -2,14 +2,19 @@ from datetime import timedelta, datetime
 from math import pow
 
 import sqlalchemy
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 from sqlalchemy import DateTime
 
 from src.api.models import Battle, BattleCreateResponse, BattleResult, Character
 from src import database as db
+from src.api import auth
 
-router = APIRouter(prefix="/battle", tags=["Battle"])
+router = APIRouter(
+    prefix="/battle", 
+    tags=["Battle"],
+    dependencies=[Depends(auth.get_api_key)],
+    )
 
 
 
