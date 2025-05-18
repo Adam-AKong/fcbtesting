@@ -6,10 +6,10 @@ description = """
 Premier Database for all your fictional character needs.
 """
 tags_metadata = [
-    {"name": "battle", "description": "Create, vote, and view battles here."},
-    {"name": "character", "description": "Create characters with fun stats!"},
-    {"name": "franchise", "description": "Create franchises."},
-    {"name": "user", "description": "Create new users."},
+    {"name": "Battle", "description": "Create, vote, and view battles here."},
+    {"name": "Character", "description": "Create characters with fun stats!"},
+    {"name": "Franchise", "description": "Create franchises."},
+    {"name": "User", "description": "Create new users."},
 ]
 
 app = FastAPI(
