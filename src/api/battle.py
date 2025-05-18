@@ -27,6 +27,7 @@ def calculate_winner(connection, battle) -> int:
         ),
         [{"id": battle.char1_id}]
     ).one()
+
     character2 = connection.execute(
         sqlalchemy.text(
             """
@@ -164,7 +165,6 @@ def character_participation(character_id: int):
             return []
         
         for r in battlelist:
-            
             if r.end_date > datetime.now():
                 print("[DEBUG] Battle is still active")
                 finished = False
