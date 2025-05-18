@@ -75,8 +75,6 @@ def make_franchise(franchise: Franchise):
             sqlalchemy.text("""
                 INSERT INTO franchise (name, description)
                 VALUES (:name, :description)
-                ON CONFLICT (name)
-                DO UPDATE SET description = EXCLUDED.description
                 RETURNING id
             """),
             {
