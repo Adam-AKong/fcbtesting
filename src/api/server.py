@@ -18,8 +18,8 @@ app = FastAPI(
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
     contact={
-        "name": "Adam Kong, Brian Kaplan, Vic Grigoryev",
-        "email": "aakong@calpoly.edu, bhkaplan@calpoly.edu, vgrigory@calpoly.edu",
+        "name": "Adam Kong",
+        "email": "aakong@calpoly.edu",
     },
     openapi_tags=tags_metadata,
 )
